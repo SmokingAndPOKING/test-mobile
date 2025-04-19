@@ -62,19 +62,19 @@ end
 local Tab1 = Window:CreateTab("Dead Rails Scripts", 4483362458)
 local Section1 = Tab1:CreateSection("Useful Scripts")
 
-Tab1:CreateButton({ Name = "Speed Hub X", Callback = function() LoadScript("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua") end })
-Tab1:CreateButton({ Name = "Spider X hub (KeyLess)", Callback = function() LoadScript("https://raw.githubusercontent.com/SpiderScriptRB/Dead-Rails-SpiderXHub-Script/refs/heads/main/SpiderXHub%202.0.txt") end })
-Tab1:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
-Tab1:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
+Tab1:CreateButton({ Name = "Infinite Yield", Callback = function() LoadScript("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source") end })
+Tab1:CreateButton({ Name = "Dex Explorer", Callback = function() LoadScript("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua") end })
+Tab1:CreateButton({ Name = "Fly GUI", Callback = function() LoadScript("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt") end })
+Tab1:CreateButton({ Name = "Anti AFK", Callback = function() LoadScript("https://raw.githubusercontent.com/hassanxzayn-lua/Anti-afk/main/antiafkbyhassanxzyn") end })
 
 -- 🌟 Tab 2 - Beaks Scripts
 local Tab2 = Window:CreateTab("Beaks ", 4483362458)
 local Section2 = Tab2:CreateSection("More Scripts")
 
-Tab2:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source") end })
-Tab2:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua") end })
-Tab2:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("https://raw.githubusercontent.com/scriptinguniverse/fakeurl/main/servercrasher.lua") end })
-Tab2:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("https://raw.githubusercontent.com/RobloxScriptHub/MobileScript/main/script.lua") end })
+Tab2:CreateButton({ Name = "CMD-X", Callback = function() LoadScript("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source") end })
+Tab2:CreateButton({ Name = "Remote Spy", Callback = function() LoadScript("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua") end })
+Tab2:CreateButton({ Name = "Server Crasher (Test)", Callback = function() LoadScript("https://raw.githubusercontent.com/scriptinguniverse/fakeurl/main/servercrasher.lua") end })
+Tab2:CreateButton({ Name = "Mobile Script", Callback = function() LoadScript("https://raw.githubusercontent.com/RobloxScriptHub/MobileScript/main/script.lua") end })
 
 -- 🌟 Tab 3 - PetSim/PetsGo
 local Tab3 = Window:CreateTab("PetSim/PetsGo", 4483362458)
@@ -88,14 +88,133 @@ Tab3:CreateButton({ Name = "Project WD Hub", Callback = function() LoadScript("h
 local Tab4 = Window:CreateTab("JailBreak", 4483362458)
 local Section4 = Tab4:CreateSection("JailBreak Scripts")
 
-Tab4:CreateButton({ Name = "Blitz", Callback = function() LoadScript("loadstring(game:HttpGet('https://raw.githubusercontent.com/BlitzIsKing/UniversalFarm/main/Loader/Regular'))()") end })
-Tab4:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
-Tab4:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
+Tab4:CreateButton({ Name = "Vynixius Jailbreak", Callback = function() LoadScript("https://raw.githubusercontent.com/RegularVynixu/Jailbreak/main/Main.lua") end })
+Tab4:CreateButton({ Name = "Admin GUI", Callback = function() LoadScript("https://pastebin.com/raw/Bjz3U2bW") end })
+Tab4:CreateButton({ Name = "ThunderZ GUI", Callback = function() LoadScript("https://pastebin.com/raw/VLktG2yY") end })
 
 -- 🌟 Tab 5 - Fisch
 local Tab5 = Window:CreateTab("Fisch", 4483362458)
 local Section5 = Tab5:CreateSection("Fisch Scripts")
 
-Tab5:CreateButton({ Name = "Native", Callback = function() LoadScript("https://raw.githubusercontent.com/FischScripts/FischHub/main/FischGui.lua") end })
-Tab5:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
-Tab5:CreateButton({ Name = "COMING SOON", Callback = function() LoadScript("") end })
+Tab5:CreateButton({ Name = "Fisch GUI", Callback = function() LoadScript("https://raw.githubusercontent.com/FischScripts/FischHub/main/FischGui.lua") end })
+Tab5:CreateButton({ Name = "Auto Chest Collector", Callback = function() LoadScript("https://raw.githubusercontent.com/FischScripts/FischHub/main/AutoChest.lua") end })
+Tab5:CreateButton({ Name = "Utility Tools", Callback = function() LoadScript("https://raw.githubusercontent.com/FischScripts/FischHub/main/Utils.lua") end })
+
+-- 🌟 Tab 6 - Settings (FPS Cap Slider)
+local SettingsTab = Window:CreateTab("Settings", 4483362458)
+local SettingsSection = SettingsTab:CreateSection("Performance")
+
+SettingsTab:CreateSlider({
+    Name = "FPS Cap",
+    Range = {30, 240},
+    Increment = 10,
+    Suffix = " FPS",
+    CurrentValue = 60,
+    Callback = function(Value)
+        if setfpscap then
+            setfpscap(Value)
+            Rayfield:Notify({
+                Title = "🎯 FPS Cap Set",
+                Content = "FPS has been capped to " .. tostring(Value),
+                Duration = 4
+            })
+        else
+            Rayfield:Notify({
+                Title = "⚠️ Unsupported",
+                Content = "Your executor does not support setfpscap.",
+                Duration = 5
+            })
+        end
+    end
+})
+
+-- 🌟 FPS Detection System with Effect Handling + Quality Auto Adjust
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local fpsCheckCooldown = false
+local effectsReduced = false
+local lastWasLow = false
+
+local originalQuality = settings().Rendering.QualityLevel
+local qualityReduced = false
+local lastSwitchTime = 0
+local switchCooldown = 5
+
+local function reduceEffects()
+    if effectsReduced then return end
+    effectsReduced = true
+
+    for _, v in ipairs(Lighting:GetChildren()) do
+        if v:IsA("BlurEffect") then
+            v.Enabled = false
+        end
+    end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+            obj.Enabled = false
+        end
+    end
+end
+
+task.spawn(function()
+    local fpsCounter = 0
+    local lastTime = os.clock()
+
+    while true do
+        RunService.RenderStepped:Wait()
+        fpsCounter += 1
+        local now = os.clock()
+
+        if now - lastTime >= 1 then
+            local fps = fpsCounter
+            local timeSinceLastSwitch = tick() - lastSwitchTime
+
+            if fps < 60 then
+                if not lastWasLow then
+                    lastWasLow = true
+                    reduceEffects()
+                    Rayfield:Notify({
+                        Title = "⚠️ FPS Warning",
+                        Content = "FPS has been decreased. Reducing effects to compensate.",
+                        Duration = 5
+                    })
+                end
+
+                if not qualityReduced and timeSinceLastSwitch >= switchCooldown then
+                    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+                    qualityReduced = true
+                    lastSwitchTime = tick()
+                    Rayfield:Notify({
+                        Title = "⚙️ Quality Reduced",
+                        Content = "Lowered graphics quality to improve FPS.",
+                        Duration = 5
+                    })
+                end
+            else
+                if lastWasLow then
+                    lastWasLow = false
+                    Rayfield:Notify({
+                        Title = "✅ FPS Restored",
+                        Content = "FPS is stable. Restoring performance.",
+                        Duration = 5
+                    })
+                end
+
+                if qualityReduced and timeSinceLastSwitch >= switchCooldown then
+                    settings().Rendering.QualityLevel = originalQuality
+                    qualityReduced = false
+                    lastSwitchTime = tick()
+                    Rayfield:Notify({
+                        Title = "🌟 Quality Restored",
+                        Content = "Graphics quality restored.",
+                        Duration = 5
+                    })
+                end
+            end
+
+            fpsCounter = 0
+            lastTime = now
+        end
+    end
+end)
